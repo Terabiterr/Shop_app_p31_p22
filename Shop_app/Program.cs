@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Shop_app.DbContext;
+using Shop_app.Services;
 
 namespace Shop_app
 {
@@ -8,6 +9,7 @@ namespace Shop_app
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddScoped<IServiceProducts, ServiceProducts>();
             //For Shop
             builder.Services.AddDbContext<ShopContext>(options =>
             {
