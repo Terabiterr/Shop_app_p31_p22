@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Shop_app.DbContext;
+
 namespace Shop_app
 {
     public class Program
@@ -5,6 +8,16 @@ namespace Shop_app
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            //For Shop
+            builder.Services.AddDbContext<ShopContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+            //For Identity
+            builder.Services.AddDbContext<UserContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             var app = builder.Build();
 
             app.Run();

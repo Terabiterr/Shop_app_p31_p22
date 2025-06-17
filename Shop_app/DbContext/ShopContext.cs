@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shop_app.Models;
 
-public class ProductContext : DbContext
+public class ShopContext : DbContext
 {
-    public ProductContext(DbContextOptions options) : base(options)
+    public ShopContext(DbContextOptions<ShopContext> options) : base(options)
     {
     }
     DbSet<Product> Products { get; set; }
