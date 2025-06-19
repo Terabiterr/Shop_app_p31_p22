@@ -10,6 +10,7 @@ namespace Shop_app
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddScoped<IServiceProducts, ServiceProducts>();
+            builder.Services.AddControllersWithViews();
             //For Shop
             builder.Services.AddDbContext<ShopContext>(options =>
             {
@@ -21,6 +22,13 @@ namespace Shop_app
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             var app = builder.Build();
+
+            app.UseRouting();
+            app.UseStaticFiles();
+            app.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}"
+                );
 
             app.Run();
         }
