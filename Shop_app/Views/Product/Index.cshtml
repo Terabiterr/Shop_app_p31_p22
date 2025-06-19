@@ -1,11 +1,17 @@
-﻿@model IEnumerable<Shop_app.Models.Product>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<Shop_app.Models.Product>
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Read Products";
 }
 <h2>Products</h2>
 <p>
-    <a href="#" class="btn btn-primary">Create</a>
+    <!--GET METHOD-->
+    <a 
+        asp-controller ="Product"
+        asp-action="Create" 
+        class="btn btn-primary"
+    >Create</a>
 </p>
 <!--Створити таблицю для відображення Продуктів-->
 <table class="col">
