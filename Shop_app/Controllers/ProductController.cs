@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shop_app.Models;
 using Shop_app.Services;
+using System.Threading.Tasks;
 
 namespace Shop_app.Controllers
 {
@@ -12,6 +14,7 @@ namespace Shop_app.Controllers
             _serviceProducts = serviceProducts;
         }
 
+        [HttpGet]
         public async Task<ViewResult> Index()
         {
             var products = await _serviceProducts.ReadAsync();
@@ -35,20 +38,54 @@ namespace Shop_app.Controllers
             }
             return NotFound(); // If validation fails, return to the form with the entered data
         }
-        //Will add CRUD operations
-        [HttpGet] //https://localhost:port/product/update
-        public ViewResult Update() => View();
 
-        [HttpPost("{id}")]
+        [HttpGet]
+        public async Task<ViewResult> Update(int id)
+        {
+            var product = await _serviceProducts.GetByIdAsync(id);
+            return View(product);
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
         {
-            if(ModelState.IsValid)
+            Console.WriteLine($"Id: {id}");
+            if (ModelState.IsValid)
             {
                 await _serviceProducts.UpdateAsync(id, product);
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();
         }
+
+        [HttpGet]
+        // GET: http://localhost:[port]/products/delete
+        // Display the product delete confirmation form
+        public async Task<ViewResult> Delete()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        // POST: http://localhost:[port]/products/delete/{id}
+        // Handle product deletion
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool result = await _serviceProducts.DeleteAsync(id); // Delete the product asynchronously
+            if(result)
+            {
+                return RedirectToAction(nameof(Index)); // Redirect to the product list
+            }
+            return NotFound();
+        }
+        // GET: http://localhost:[port]/products/details/{id}
+        // Displays details of a single product by ID
+        public async Task<ViewResult> Details(int id)
+        {
+            var product = await _serviceProducts.GetByIdAsync(id); // Retrieve product by ID asynchronously
+            return View(product); // Return the product details to the view
+        }
+
     }
 }
