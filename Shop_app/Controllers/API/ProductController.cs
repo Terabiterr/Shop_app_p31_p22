@@ -8,5 +8,7 @@ namespace Shop_app.Controllers.API
     public class ProductController : Controller
     {
         //Will add realization
+        //crud протестувати в постман
+        //Додати реєстрацію та авторизацію + сесію
     }
 }
