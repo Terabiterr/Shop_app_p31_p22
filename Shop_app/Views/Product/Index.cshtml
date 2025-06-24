@@ -14,7 +14,7 @@
     >Create</a>
 </p>
 <!--Створити таблицю для відображення Продуктів-->
-<table class="col">
+<table class="table">
     <thead>
         <tr>
             <th scope="col">Id</th>
@@ -33,7 +33,13 @@
                 <td>@product.Price</td>
                 <td>@product.Description</td>
                 <td>
-                    <a href="#" class="btn btn-warning">Update</a>
+                    <!--http://localhost:port/product/update/5-->
+                    <a 
+                        asp-controller="Product"
+                        asp-action="Update"
+                        asp-route-id="@product.Id"
+                        class="btn btn-warning"
+                    >Update</a>
                     <a href="#" class="btn btn-success">Details</a>
                     <a href="#" class="btn btn-danger">Delete</a>
                 </td>

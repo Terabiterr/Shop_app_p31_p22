@@ -22,7 +22,9 @@ namespace Shop_app
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             var app = builder.Build();
-
+            //Example
+            //https://localhost:port/about
+            //AboutController
             app.UseRouting();
             app.UseStaticFiles();
             app.MapControllerRoute(
