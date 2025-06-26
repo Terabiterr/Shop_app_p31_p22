@@ -58,8 +58,38 @@ namespace Shop_app.Controllers.API
             }
             return BadRequest(new { state = "Product is null ..." });
         }
-        //UpdateProduct
-        //DeleteProduct
+        //Method: PUT 
+        //http://localhost:5247/api/product/4
+        //Request:
+        //Body
+        //{
+        //  Id: 4,
+        //  Name: "The product for update",
+        //  Price: 25,50,
+        //  Description: "Some description"
+        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
+        {
+            if (product != null)
+            {
+                var result = await _serviceProducts.UpdateAsync(id, product);
+                return Ok(product);
+            }
+            return BadRequest(new { state = "Product is null ..." });
+        }
+        //Method: DELETE 
+        //http://localhost:5247/api/product/4
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var result = await _serviceProducts.DeleteAsync(id);
+            if(result)
+            {
+                return Ok(new { status = "Ok!" });
+            }
+            return BadRequest(new { status = "Bad!" });
+        }
 
     }
 }
