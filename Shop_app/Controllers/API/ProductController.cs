@@ -90,6 +90,5 @@ namespace Shop_app.Controllers.API
             }
             return BadRequest(new { status = "Bad!" });
         }
-
     }
 }
