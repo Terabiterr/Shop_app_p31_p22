@@ -50,7 +50,10 @@ namespace Shop_app.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
         {
-            Console.WriteLine($"Id: {id}");
+            //Додати перевірку для Price
+            //Щоб працювало з комою та крапкою та без коми і крапки
+
+            Console.WriteLine(product);
             if (ModelState.IsValid)
             {
                 await _serviceProducts.UpdateAsync(id, product);
