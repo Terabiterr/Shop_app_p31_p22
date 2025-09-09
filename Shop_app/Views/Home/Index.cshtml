@@ -5,13 +5,26 @@
 }
 <h1>Home Page</h1>
 <!--
-    asp-controller -> Redirect to ProductController
-    asp-action -> In ProductController start method Index
+asp-controller -> Redirect to ProductController
+asp-action -> In ProductController start method Index
 -->
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        <h1>Hello, @User.Identity.Name</h1>
+    }
+    else
+    {
+        <h1>Login please!</h1>
+    }
+}
 <a class="btn btn-dark" 
     asp-controller="Product" 
     asp-action="Index"
 >Read Products</a>
-<a class="btn btn-dark"
+<a class="btn btn-warning"
    asp-controller="User"
    asp-action="Register">Register</a>
+<a class="btn btn-success"
+   asp-controller="User"
+   asp-action="Login">Login</a>

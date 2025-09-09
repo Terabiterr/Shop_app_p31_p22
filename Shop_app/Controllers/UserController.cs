@@ -6,9 +6,11 @@ namespace Shop_app.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        public UserController(UserManager<IdentityUser> userManager)
+        private readonly SignInManager<IdentityUser> _signInManager;
+        public UserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         //http://localhost:[port]/user/register
@@ -42,5 +44,29 @@ namespace Shop_app.Controllers
             }
             return BadRequest(result.Errors);
         }
+        //GET:
+        [HttpGet]
+        public async Task<IActionResult> Login()
+        {
+            return View();
+        }
+        // POST: 
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                return BadRequest("Email and password are required.");
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return Redirect("/");
+            }
+            return BadRequest("Error auth ...");
+        }
+
     }
 }
+
