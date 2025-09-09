@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Shop_app.DbContext;
 using Shop_app.Services;
 
@@ -21,6 +23,12 @@ namespace Shop_app
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddSession();
+            //For IdentityUser
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
+            {
+                //Validation
+            }).AddEntityFrameworkStores<UserContext>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
