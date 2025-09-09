@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Shop_app.DbContext;
 using Shop_app.Services;
 
@@ -27,7 +28,15 @@ namespace Shop_app
             //For IdentityUser
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
             {
-                //Validation
+                option.SignIn.RequireConfirmedPhoneNumber = false;
+                option.SignIn.RequireConfirmedEmail = true;
+                option.Password.RequireNonAlphanumeric = false;
+                option.Password.RequireDigit = false;
+                option.Password.RequireLowercase = false;
+                option.Password.RequireUppercase = false;
+                option.Password.RequiredLength = 4;
+                option.Password.RequiredUniqueChars = 0;
+
             }).AddEntityFrameworkStores<UserContext>();
             builder.Services.AddCors(options =>
             {
