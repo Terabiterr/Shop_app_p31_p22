@@ -13,9 +13,13 @@
               asp-controller="User"
               asp-action="AssignRole"
               method="post">
+            <label asp-for="UserId" class="form-label">UserId:</label>
+            <input type="text" class="form-control" name="UserId" required />
+            <label asp-for="RoleId" class="form-label">RoleId:</label>
+            <input type="text" class="form-control" name="RoleId" required />
             <label asp-for="RoleName" class="form-label">RoleName:</label>
             <input type="text" class="form-control" name="RoleName" required />
-            <button type="submit" class="btn btn-success m-3">CreateRole</button>
+            <button type="submit" class="btn btn-success m-3">AssignRole</button>
         </form>
     </div>
     <div class="col-4"></div>

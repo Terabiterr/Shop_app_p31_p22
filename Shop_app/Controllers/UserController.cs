@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shop_app.Models;
 
@@ -74,9 +75,58 @@ namespace Shop_app.Controllers
         [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole(Role role)
         {
-            //Скинути фото форми CreateRole в браузері
-            //В тімс
-            return BadRequest();
+            if(string.IsNullOrEmpty(role.RoleName))
+            {
+                return BadRequest("Error RoleName ...");
+            }
+            var existRoleName = await _roleManager.RoleExistsAsync(role.RoleName);
+            if(existRoleName)
+            {
+                return BadRequest("This RoleName alredy exist ...");
+            }
+            var result = await _roleManager.CreateAsync(new IdentityRole(role.RoleName));
+            if(result.Succeeded)
+            {
+                return Ok($"Role: {role.RoleName} created ...");
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpGet]
+        public async Task<ViewResult> AssignRole() => View();
+        [HttpPost("AssignRole")]
+        public async Task<IActionResult> AssignRole(Role role)
+        {
+            if (
+                string.IsNullOrEmpty(role.UserId) &&
+                string.IsNullOrEmpty(role.RoleId) &&
+                string.IsNullOrEmpty(role.RoleName)
+                )
+            {
+                return BadRequest("Error assign role ...");
+            }
+            var existRole = await _roleManager.FindByIdAsync(role.RoleId);
+            if (existRole == null)
+            {
+                return BadRequest("Not found Role ...");
+            }
+            var existUser = await _userManager.FindByIdAsync(role.UserId);
+            if (existUser == null)
+            {
+                return BadRequest("Not found User ...");
+            }
+            var result = await _userManager.AddToRoleAsync(existUser, role.RoleName);
+            if(result.Succeeded)
+            {
+                return Ok("Roles assigned ...");
+            }
+            return BadRequest(result.Errors);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync(); // Выход из системы
+            return RedirectToAction("Index", "Home"); // Перенаправляет на домашнюю страницу
         }
 
     }
