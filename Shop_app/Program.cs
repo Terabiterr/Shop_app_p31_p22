@@ -37,7 +37,9 @@ namespace Shop_app
                 option.Password.RequiredLength = 4;
                 option.Password.RequiredUniqueChars = 0;
 
-            }).AddEntityFrameworkStores<UserContext>();
+            })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<UserContext>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -54,6 +56,8 @@ namespace Shop_app
             //https://localhost:port/about
             //AboutController
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseStaticFiles();
             app.MapControllerRoute(
                     name: "default",

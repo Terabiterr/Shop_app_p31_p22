@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Shop_app.Models;
 
 namespace Shop_app.Controllers
 {
@@ -7,10 +8,12 @@ namespace Shop_app.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        public UserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public UserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         //http://localhost:[port]/user/register
@@ -65,6 +68,15 @@ namespace Shop_app.Controllers
                 return Redirect("/");
             }
             return BadRequest("Error auth ...");
+        }
+        [HttpGet]
+        public async Task<ViewResult> CreateRole() => View();
+        [HttpPost("CreateRole")]
+        public async Task<IActionResult> CreateRole(Role role)
+        {
+            //Скинути фото форми CreateRole в браузері
+            //В тімс
+            return BadRequest();
         }
 
     }

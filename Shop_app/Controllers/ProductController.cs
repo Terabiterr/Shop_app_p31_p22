@@ -20,10 +20,13 @@ namespace Shop_app.Controllers
             var products = await _serviceProducts.ReadAsync();
             return View(products);
         }
+
         //Will add CRUD operations
+        [Authorize(Roles = "admin")]
         [HttpGet] //https://localhost:port/product/create
         public ViewResult Create() => View();
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken] // Validate the anti-forgery token for security
         // POST: http://localhost:[port]/products/create
@@ -39,6 +42,7 @@ namespace Shop_app.Controllers
             return NotFound(); // If validation fails, return to the form with the entered data
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ViewResult> Update(int id)
         {
@@ -46,6 +50,7 @@ namespace Shop_app.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
@@ -62,6 +67,7 @@ namespace Shop_app.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         // GET: http://localhost:[port]/products/delete
         // Display the product delete confirmation form
@@ -70,6 +76,7 @@ namespace Shop_app.Controllers
             return View();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         // POST: http://localhost:[port]/products/delete/{id}
         // Handle product deletion
