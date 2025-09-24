@@ -8,9 +8,9 @@
 <p>
     <!--GET METHOD-->
     <a 
-        asp-controller ="Product"
-        asp-action="Create" 
-        class="btn btn-primary"
+    asp-controller ="Product"
+    asp-action="Create" 
+    class="btn btn-primary"
     >Create</a>
 </p>
 <!--Створити таблицю для відображення Продуктів-->
@@ -21,6 +21,7 @@
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Description</th>
+            <th scope="col">Photo</th>
             <th scope="col">Tools</th>
         </tr>
     </thead>
@@ -32,6 +33,18 @@
                 <td>@product.Name</td>
                 <td>@product.Price</td>
                 <td>@product.Description</td>
+                <td>
+                    @if(
+                      product.ImageData != null && 
+                      product.ImageType != null
+                  )
+                    {
+                        <!-- Errors!!! -->
+                        var base64 = Convert.ToBase64String(product.ImageFile);
+                        var imgSrc = $"data:{product.ImageType};base64,{base64}";
+                        <img src="@imgSrc" width="200" height="100"/>
+                    }
+                </td>
                 <td>
                     <!--http://localhost:port/product/update/5-->
                     <a 

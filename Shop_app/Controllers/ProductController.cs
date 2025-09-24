@@ -32,10 +32,18 @@ namespace Shop_app.Controllers
         // POST: http://localhost:[port]/products/create
         // Handle product creation form submission
         //Price is must have , => example 12,50
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description,ImageData")] Product product)
         {
             if (ModelState.IsValid) // Check if the form data is valid
             {
+                //Product photo
+                using (var ms = new MemoryStream())
+                {
+                    await product.ImageData.CopyToAsync(ms);
+                    product.ImageFile = ms.ToArray();
+                }
+                //image/png
+                product.ImageType = product.ImageData.ContentType; //format
                 await _serviceProducts.CreateAsync(product); // Create the product asynchronously
                 return RedirectToAction(nameof(Index)); // Redirect to the product list
             }
