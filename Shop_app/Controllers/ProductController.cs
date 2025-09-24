@@ -22,11 +22,11 @@ namespace Shop_app.Controllers
         }
 
         //Will add CRUD operations
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpGet] //https://localhost:port/product/create
         public ViewResult Create() => View();
 
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken] // Validate the anti-forgery token for security
         // POST: http://localhost:[port]/products/create
@@ -42,7 +42,7 @@ namespace Shop_app.Controllers
             return NotFound(); // If validation fails, return to the form with the entered data
         }
 
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpGet]
         public async Task<ViewResult> Update(int id)
         {
@@ -50,7 +50,7 @@ namespace Shop_app.Controllers
             return View(product);
         }
 
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
@@ -67,7 +67,7 @@ namespace Shop_app.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpGet]
         // GET: http://localhost:[port]/products/delete
         // Display the product delete confirmation form
@@ -76,7 +76,7 @@ namespace Shop_app.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Moderator,admin")]
+        [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpPost]
         // POST: http://localhost:[port]/products/delete/{id}
         // Handle product deletion

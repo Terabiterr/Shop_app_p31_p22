@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Shop_app.DbContext;
 using Shop_app.Services;
 
@@ -24,7 +22,14 @@ namespace Shop_app
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            //Session and Cookies
             builder.Services.AddSession();
+            builder.Services.AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                    options.SlidingExpiration = true;
+                });
             //For IdentityUser
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
             {
