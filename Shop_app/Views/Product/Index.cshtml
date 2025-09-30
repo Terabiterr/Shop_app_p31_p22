@@ -35,11 +35,10 @@
                 <td>@product.Description</td>
                 <td>
                     @if(
-                      product.ImageData != null && 
+                      product.ImageFile != null && 
                       product.ImageType != null
                   )
                     {
-                        <!-- Errors!!! -->
                         var base64 = Convert.ToBase64String(product.ImageFile);
                         var imgSrc = $"data:{product.ImageType};base64,{base64}";
                         <img src="@imgSrc" width="200" height="100"/>
