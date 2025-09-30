@@ -61,7 +61,7 @@ namespace Shop_app.Controllers
         [Authorize(Roles = "Moderator,Admin,Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Update(int id, [Bind("Id,Name,Price,Description,ImageData")] Product product)
         {
             //Додати перевірку для Price
             //Щоб працювало з комою та крапкою та без коми і крапки
@@ -69,6 +69,14 @@ namespace Shop_app.Controllers
             Console.WriteLine(product);
             if (ModelState.IsValid)
             {
+                //Product photo
+                using (var ms = new MemoryStream())
+                {
+                    await product.ImageData.CopyToAsync(ms);
+                    product.ImageFile = ms.ToArray();
+                }
+                //image/png
+                product.ImageType = product.ImageData.ContentType; //format
                 await _serviceProducts.UpdateAsync(id, product);
                 return RedirectToAction(nameof(Index));
             }
