@@ -10,13 +10,14 @@ namespace Shop_app.Controllers.API
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProductController : Controller
+    public class APIProductController : Controller
     {
         private readonly IServiceProducts _serviceProducts;
-        public ProductController(IServiceProducts serviceProducts)
+        public APIProductController(IServiceProducts serviceProducts)
         {
             _serviceProducts = serviceProducts;
         }
+        [Authorize(Roles = "admin,moderator,user")]
         [HttpGet]
         public async Task<IActionResult> GetJsonAsync()
         {
@@ -32,6 +33,7 @@ namespace Shop_app.Controllers.API
         }
         //http://localhost:5247/api/product/4
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin,moderator,user")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _serviceProducts.GetByIdAsync(id);

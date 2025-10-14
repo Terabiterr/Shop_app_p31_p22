@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Shop_app.Models;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -12,13 +13,14 @@ namespace Shop_app.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class APIUserController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        public UserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public APIUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -36,7 +38,7 @@ namespace Shop_app.Controllers.API
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var newUser = new IdentityUser
                 {
@@ -44,21 +46,31 @@ namespace Shop_app.Controllers.API
                     Email = model.Email,
                     EmailConfirmed = true
                 };
-                var result = await _userManager.CreateAsync(newUser, model.Password);
-                if (result.Succeeded)
+                //Assign role
+                IdentityRole? existRole = await _roleManager.FindByNameAsync("user");
+                if (existRole == null)
                 {
-                    return Ok(new { status = 200, message = "User register successfully" });
+                    return BadRequest("Not found Role ...");
                 }
-                foreach (var error in result.Errors)
+                //Create user
+                var result_create_user = await _userManager.CreateAsync(newUser, model.Password);
+                if (!result_create_user.Succeeded)
                 {
-                    Console.WriteLine(error);
+                    return BadRequest(result_create_user.Errors);
                 }
-                return BadRequest(result.Errors);
+                IdentityUser? existUser = await _userManager.FindByNameAsync(newUser.UserName);
+                if (existUser == null)
+                {
+                    return BadRequest("Not found User ...");
+                }
+                var result = await _userManager.AddToRoleAsync(existUser, existRole.Name);
+                if (!result.Succeeded)
+                {
+                    return BadRequest("Asssign role error ...");
+                }
+                return Ok(new { status = 200, message = "User register successfully", role = "user" });
             }
-            else
-            {
-                return BadRequest(new { message = "Error model" });
-            }
+            return BadRequest("Error validation model ...");
         }
         /*
          * POST
@@ -114,6 +126,64 @@ namespace Shop_app.Controllers.API
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token); ;
+        }
+        /*
+         {
+            "RoleId": "",
+            "UserId": "",
+            "RoleName": "user"
+        }
+         */
+        //Roles create only admin
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> CreateRole([FromBody] Role role)
+        {
+            if (string.IsNullOrEmpty(role.RoleName))
+            {
+                return BadRequest("Error RoleName ...");
+            }
+            var existRoleName = await _roleManager.RoleExistsAsync(role.RoleName);
+            if (existRoleName)
+            {
+                return BadRequest("This RoleName alredy exist ...");
+            }
+            var result = await _roleManager.CreateAsync(new IdentityRole(role.RoleName));
+            if (result.Succeeded)
+            {
+                return Ok($"Role: {role.RoleName} created ...");
+            }
+            return BadRequest(result.Errors);
+        }
+        //Roles create only admin
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> AssignRole(Role role)
+        {
+            if (
+                string.IsNullOrEmpty(role.UserId) &&
+                string.IsNullOrEmpty(role.RoleId) &&
+                string.IsNullOrEmpty(role.RoleName)
+                )
+            {
+                return BadRequest("Error assign role ...");
+            }
+            var existRole = await _roleManager.FindByIdAsync(role.RoleId);
+            if (existRole == null)
+            {
+                return BadRequest("Not found Role ...");
+            }
+            var existUser = await _userManager.FindByIdAsync(role.UserId);
+            if (existUser == null)
+            {
+                return BadRequest("Not found User ...");
+            }
+            var result = await _userManager.AddToRoleAsync(existUser, role.RoleName);
+            if (result.Succeeded)
+            {
+                return Ok("Roles assigned ...");
+            }
+            return BadRequest(result.Errors);
         }
     }
 }
