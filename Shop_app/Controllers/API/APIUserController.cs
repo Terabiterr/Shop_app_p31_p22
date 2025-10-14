@@ -11,9 +11,9 @@ using System.Text;
 
 namespace Shop_app.Controllers.API
 {
+    //Error Auth 401
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class APIUserController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -80,6 +80,7 @@ namespace Shop_app.Controllers.API
                 "password": "12345"
             }
          */
+        [Authorize(Roles = "admin,moderator,user")]
         [HttpPost("auth")]
         public async Task<IActionResult> Auth([FromBody] LoginModel model)
         {
@@ -136,7 +137,7 @@ namespace Shop_app.Controllers.API
          */
         //Roles create only admin
         [Authorize(Roles = "admin")]
-        [HttpPost]
+        [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole([FromBody] Role role)
         {
             if (string.IsNullOrEmpty(role.RoleName))
@@ -157,7 +158,7 @@ namespace Shop_app.Controllers.API
         }
         //Roles create only admin
         [Authorize(Roles = "admin")]
-        [HttpPost]
+        [HttpPost("AssignRole")]
         public async Task<IActionResult> AssignRole(Role role)
         {
             if (
