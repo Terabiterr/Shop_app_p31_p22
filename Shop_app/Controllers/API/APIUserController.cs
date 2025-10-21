@@ -80,7 +80,6 @@ namespace Shop_app.Controllers.API
                 "password": "12345"
             }
          */
-        [Authorize(Roles = "admin,moderator,user")]
         [HttpPost("auth")]
         public async Task<IActionResult> Auth([FromBody] LoginModel model)
         {
@@ -108,26 +107,36 @@ namespace Shop_app.Controllers.API
                 return BadRequest(new { message = "Error model" });
             }
         }
-        private string GenerateJwtToken(IdentityUser user)
+        private async Task<string> GenerateJwtToken(IdentityUser user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var userRoles = await _userManager.GetRolesAsync(user); // 🟢 Отримуємо ролі
+
+            var authClaims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
+
+            // 🟢 Додаємо ролі в claims
+            foreach (var role in userRoles)
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.Email)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:DurationInMinutes"])),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"]
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token); ;
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:DurationInMinutes"])),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
         /*
          {
             "RoleId": "",
@@ -136,6 +145,7 @@ namespace Shop_app.Controllers.API
         }
          */
         //Roles create only admin
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "admin")]
         [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole([FromBody] Role role)
@@ -157,6 +167,7 @@ namespace Shop_app.Controllers.API
             return BadRequest(result.Errors);
         }
         //Roles create only admin
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "admin")]
         [HttpPost("AssignRole")]
         public async Task<IActionResult> AssignRole(Role role)

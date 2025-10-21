@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shop_app.DbContext;
 using Shop_app.Services;
+using System.Security.Claims;
 using System.Text;
 
 namespace Shop_app
@@ -64,7 +65,8 @@ namespace Shop_app
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                        RoleClaimType = ClaimTypes.Role // 🟢 ОБОВ’ЯЗКОВО
                     };
                 });
             builder.Services.AddCors(options =>
