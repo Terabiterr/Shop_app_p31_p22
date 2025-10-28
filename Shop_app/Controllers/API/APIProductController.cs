@@ -24,7 +24,15 @@ namespace Shop_app.Controllers.API
             var products = await _serviceProducts.ReadAsync();
             if(products != null)
             {
-                return Ok(products);
+                var result = products.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Price,
+                    p.Description,
+                    Image = p.ImageFile != null ? $"data:{p.ImageType};base64,{Convert.ToBase64String(p.ImageFile)}" : null
+                });
+                return Ok(result);
             }
             else
             {
