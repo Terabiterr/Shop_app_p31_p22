@@ -9,7 +9,6 @@ namespace Shop_app.Controllers.API
     //http://localhost:5247/api/product
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class APIProductController : Controller
     {
         private readonly IServiceProducts _serviceProducts;
@@ -17,7 +16,7 @@ namespace Shop_app.Controllers.API
         {
             _serviceProducts = serviceProducts;
         }
-        [Authorize(Roles = "admin,moderator,user")]
+        //[Authorize(Roles = "admin,moderator,user")]
         [HttpGet]
         public async Task<IActionResult> GetJsonAsync()
         {
@@ -41,7 +40,7 @@ namespace Shop_app.Controllers.API
         }
         //http://localhost:5247/api/product/4
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin,moderator,user")]
+        //
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _serviceProducts.GetByIdAsync(id);
@@ -61,6 +60,8 @@ namespace Shop_app.Controllers.API
         //  Price: 25,50,
         //  Description: "Some description"
         //}
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "admin,moderator,user")]
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
@@ -81,6 +82,8 @@ namespace Shop_app.Controllers.API
         //  Price: 25,50,
         //  Description: "Some description"
         //}
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "admin,moderator,user")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
@@ -93,6 +96,8 @@ namespace Shop_app.Controllers.API
         }
         //Method: DELETE 
         //http://localhost:5247/api/product/4
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "admin,moderator,user")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
