@@ -1,33 +1,8 @@
-async function login(email, password) {
-            try {
-                const response = await fetch(
-                    "https://localhost:7089/api/apiuser/auth",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            "email": email,
-                            "password": password
-                        })
-                    });
-                if (!response.ok) {
-                    throw new Error(`Error auth: ${response.status}`)
-                }
-                const data = await response.json()
-                return data.token;
-            } catch (error) {
-                console.error(`Error: ${error}`)
-            }
-        }
-        async function getProducts(token) {
-            const auth_token = `Bearer ${token.result}`;
+async function getProducts() {
             const url = `https://localhost:7089/api/apiproduct`;
             fetch(url, {
                 method: 'GET',
                 headers: {
-                    "Authorization": auth_token,
                     "Content-Type": "application/json"
                 }
             })
@@ -54,8 +29,6 @@ async function login(email, password) {
                 })
         }
         async function main() {
-            //Auth get token
-            const token = await login("admin@gmail.com", "0000")
-            getProducts(token)
+            getProducts()
         }
         main()
