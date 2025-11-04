@@ -21,8 +21,12 @@ async function login() {
             }
             return response.json()
         }).then(data => {
-            localStorage.setItem("token", data.token.result)
-            console.log(data.token.result)
+            localStorage.setItem("jwt_token", data.token.result)
+            //Дізнатися з токену інформацію про користувача
+            // Приклад використання:
+            const token = localStorage.getItem('jwt_token');
+            const payload = parseJwt(token);
+            console.log('Це користувач:', payload);
             return data.token.result;
         }).catch(err => console.log(err))
 }
@@ -49,3 +53,19 @@ async function register(email, password) {
         console.error(`Error: ${error}`)
     }
 }
+
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
