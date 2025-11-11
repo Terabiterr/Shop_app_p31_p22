@@ -12,13 +12,13 @@
             <li>main</li>
         </ul>
     </header>
-    <div class="box_register">
+    <div id="box_register">
         <h2>Register</h2>
-        <input type="email" value="email"><br>
-        <input type="password" value="password">
-        <button id="btn_register">register</button>
+        <input id="username_register_id" type="email" value="email"><br>
+        <input id="password_register_id" type="password" value="password">
+        <button onclick="register()" id="btn_register">register</button>
     </div>
-    <div class="box_login">
+    <div id="box_login">
         <h2>Login</h2>
         <input id="emailId" type="email" value="email"><br>
         <input id="passwordId" type="password" value="password">
@@ -26,7 +26,7 @@
     </div>
     <div class="box_profile">
         <p id="user_email"></p>
-        <button id="btn_logout">logout</button>
+        <button onclick="logout()" id="btn_logout">logout</button>
     </div>
     <div class="box_user_results">
         <pre id="output"></pre>

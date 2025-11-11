@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', () => {
+    session_user()
+})
+
 async function login() {
     const email = document.getElementById("emailId").value;
     const password = document.getElementById("passwordId").value;
@@ -22,15 +26,13 @@ async function login() {
             return response.json()
         }).then(data => {
             localStorage.setItem("jwt_token", data.token.result)
-            //Дізнатися з токену інформацію про користувача
-            // Приклад використання:
-            const token = localStorage.getItem('jwt_token');
-            const payload = parseJwt(token);
-            console.log('Це користувач:', payload);
+            session_user()
             return data.token.result;
         }).catch(err => console.log(err))
 }
-async function register(email, password) {
+async function register() {    
+    const username = document.getElementById("username_register_id").value;
+    const password = document.getElementById("password_register_id").value;
     try {
         const response = await fetch(
             "https://localhost:7089/api/apiuser/register",
@@ -40,7 +42,7 @@ async function register(email, password) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    "email": email,
+                    "email": username,
                     "password": password
                 })
             });
@@ -48,7 +50,7 @@ async function register(email, password) {
             throw new Error(`Error auth: ${response.status}`)
         }
         const data = await response.json()
-        return data.token;
+        console.log(data)
     } catch (error) {
         console.error(`Error: ${error}`)
     }
@@ -69,3 +71,22 @@ function parseJwt(token) {
   }
 }
 
+async function session_user() {
+    //Дізнатися з токену інформацію про користувача
+    // Приклад використання:
+    const token = localStorage.getItem('jwt_token');
+    const payload = parseJwt(token);
+    console.log('Це користувач:', payload);
+    if(token) {
+        var box_register = document.getElementById("box_register")
+        box_register.style.display = "none";
+        var box_login = document.getElementById("box_login")
+        box_login.style.display = "none";
+    }
+
+}
+
+async function logout() {
+    localStorage.removeItem("jwt_token");
+    window.location.reload()
+}
