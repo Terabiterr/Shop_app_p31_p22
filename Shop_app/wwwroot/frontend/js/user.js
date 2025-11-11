@@ -114,7 +114,7 @@ async function user_profile() {
       ${fields}
     </div>
   `;
-}
+} 
 
 async function session_user() {
     //Дізнатися з токену інформацію про користувача

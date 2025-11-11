@@ -1,3 +1,6 @@
+async function orderProduct(id) {
+    //Реалізувати покупку товара
+}
 async function getProducts() {
             const url = `https://localhost:7089/api/apiproduct`;
             fetch(url, {
@@ -23,6 +26,7 @@ async function getProducts() {
                         <h3>${product.name}</h3>
                         <p>${product.description}</p>
                         <strong>${product.price}</strong>
+                        <button onclick="orderProduct(${product.id})" id="product${product.id}">Buy</button>
                     `
                         parent_div.appendChild(div);
                     });
