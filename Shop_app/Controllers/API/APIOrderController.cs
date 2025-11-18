@@ -5,8 +5,9 @@ namespace Shop_app.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class APIOrderController : ControllerBase
+    public class APIOrderController : Controller
     {
-
+        
+        
     }
 }
