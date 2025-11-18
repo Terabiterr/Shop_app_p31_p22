@@ -16,6 +16,7 @@ namespace Shop_app
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddScoped<IServiceProducts, ServiceProducts>();
+            builder.Services.AddScoped<IOrderService, ServiceOrder>();
             builder.Services.AddControllersWithViews();
             //For Shop
             builder.Services.AddDbContext<ShopContext>(options =>

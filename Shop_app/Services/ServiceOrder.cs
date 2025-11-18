@@ -14,9 +14,36 @@ namespace Shop_app.Services
             _shopContext = shopContext;
         }
 
-        public Task<Order> PlaceOrderAsync(string userId, List<CartItem> cartItems)
+        public async Task<Order> PlaceOrderAsync(string userId, List<CartItem> cartItems)
         {
-            throw new NotImplementedException();
+            var newOrder = new Order
+            {
+                UserId = userId,
+                OrderDate = DateTime.Now,
+                Status = "Pending",
+                OrderDetails = new List<OrderDetail>()
+            };
+            decimal totalOrderAmount = 0;
+            foreach (var item in cartItems)
+            {
+                var product = await _shopContext.Products.FindAsync(item.ProductId);
+                if(product == null)
+                {
+                    throw new Exception("Product not found ...");
+                }
+                var detail = new OrderDetail
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                };
+                newOrder.OrderDetails.Add(detail);
+                totalOrderAmount += item.Quantity * item.Price;
+            }
+
+            _shopContext.Orders.Add(newOrder);
+            await _shopContext.SaveChangesAsync();
+            return newOrder;
         }
     }
 }
