@@ -25,6 +25,7 @@ namespace Shop_app.Models
         //Format image
         public string? ImageType { get; set; }
         public byte[]? ImageFile { get; set; }
+        
         public override string ToString()
         {
             return $"Id: {Id}, Name: {Name}, Price: {Price}, Description: {Description}";
